@@ -26,10 +26,17 @@ app.get('/api/timestamp/', function (req, res) {
 });
 
 app.get('/api/timestamp/:date', function (req, res) {
-  const date = new Date(parseInt(req.params.date));
-  if (date == 'Invalid Date') res.json({ error: 'Invalid Date' });
-  const timestamp = date.getTime();
-  const utc = date.toUTCString();
+  const date = req.params.date;
+  // if 5 or more numbers, it's a timestamp
+  if (/\d{5,}/.test(date)) {
+    date_int = parseInt(date);
+    res.json({ unix: date_int, utc: new Date(date_int).toUTCString() });
+  }
+
+  const date_string = new Date(date);
+  if (date_string === 'Invalid Date') res.json({ error: 'Invalid Date' });
+  const timestamp = date_string.valueOf();
+  const utc = date_string.toUTCString();
   res.json({ unix: timestamp, utc: utc });
 });
 
